@@ -347,7 +347,8 @@ globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+		if ((getuid() != geteuid()) || (getgid() != getegid()) ||
+		    (h = getenv("HOME")) == NULL) {
 			if ((pwd = getpwuid(getuid())) == NULL)
 				return pattern;
 			else
@@ -686,10 +687,12 @@ globextend(const Char *path, glob_t *pglob, size_t *limitp)
 	}
 	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    newsize + *limitp >= ARG_MAX) {
-		errno = 0;
-		return(GLOB_NOSPACE);
+	if (pglob->gl_flags & GLOB_LIMIT) {
+		ssize_t arg_max = sysconf(_SC_ARG_MAX);
+		if (arg_max >= 0 && newsize + *limitp >= arg_max) {
+			errno = 0;
+			return(GLOB_NOSPACE);
+		}
 	}
 
 	return(copy == NULL ? GLOB_NOSPACE : 0);

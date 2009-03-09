@@ -1,0 +1,17 @@
+Document: csh
+Title: An Introduction to the C shell
+Author: William Joy, Mark Seiden
+Abstract: The C shell was originally written at UCB to overcome limitations
+ in the Bourne shell.  Its flexibility and comfort (at that time) quickly
+ made it the shell of choice until more advanced shells like ksh, bash, zsh
+ or tcsh appeared.  Most of the latter incorporate features original to csh.
+ .
+ This is a step-by-step tutorial on interactive use of the C shell.  It is
+ mainly of historical interest.
+Section: Shells
+
+Format: PostScript
+Files: /usr/share/doc/csh/csh.ps.gz
+
+Format: text
+Files: /usr/share/doc/csh/csh.txt.gz

@@ -67,6 +67,8 @@ static char rcsid[] = "$OpenBSD: exp.c,v 1.7 2003/06/11 21:09:50 deraadt Exp $";
 #define EQMATCH 7
 #define NOTEQMATCH 8
 
+#define exp2 csh_exp2	/* avoid conflict with gcc builtin */
+
 static int	exp1(Char ***, bool);
 static int	exp2(Char ***, bool);
 static int	exp2a(Char ***, bool);

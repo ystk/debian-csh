@@ -545,3 +545,14 @@ Char   *STR_BSHELL;
 #endif
 Char   *STR_WORD_CHARS;
 Char  **STR_environ;
+
+#ifndef MAXPATHLEN
+#define MAXPATHLEN BUFSIZ
+#endif
+
+extern const char *const sys_sigabbrev[];
+
+#include <stdio_ext.h>
+#define fpurge __fpurge
+
+size_t	strlcpy(char *, const char *, size_t);

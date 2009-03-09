@@ -53,6 +53,7 @@ static char rcsid[] = "$OpenBSD: csh.c,v 1.24 2006/10/18 21:20:39 deraadt Exp $"
 #include <pwd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <locale.h>
 #include <unistd.h>
 #include <vis.h>
@@ -93,10 +94,11 @@ bool    tellwhat = 0;
 
 extern char **environ;
 
-static int	readf(void *, char *, int);
-static fpos_t	seekf(void *, fpos_t, int);
-static int	writef(void *, const char *, int);
+static ssize_t	readf(void *, char *, size_t);
+static int	seekf(void *, off64_t *, int);
+static ssize_t	writef(void *, const char *, size_t);
 static int	closef(void *);
+static cookie_io_functions_t cookief = {readf, writef, seekf, closef};
 static int	srccat(Char *, Char *);
 static int	srcfile(char *, bool, bool);
 static void	phup(int);
@@ -201,14 +203,11 @@ main(int argc, char *argv[])
      *	    Fortunately this is not needed under the current implementation
      *	    of stdio.
      */
-    (void) fclose(cshin);
-    (void) fclose(cshout);
-    (void) fclose(csherr);
-    if (!(cshin  = funopen((void *) &SHIN,  readf, writef, seekf, closef)))
+    if (!(cshin  = fopencookie((void *) &SHIN,  "r", cookief)))
 	exit(1);
-    if (!(cshout = funopen((void *) &SHOUT, readf, writef, seekf, closef)))
+    if (!(cshout = fopencookie((void *) &SHOUT, "w", cookief)))
 	exit(1);
-    if (!(csherr = funopen((void *) &SHERR, readf, writef, seekf, closef)))
+    if (!(csherr = fopencookie((void *) &SHERR, "w", cookief)))
 	exit(1);
     (void) setvbuf(cshin,  NULL, _IOLBF, 0);
     (void) setvbuf(cshout, NULL, _IOLBF, 0);
@@ -1222,23 +1221,23 @@ gethdir(Char *home, int len)
  */
 #define DESC(a) (*((int *) (a)) - (didfds && *((int *) a) >= FSHIN ? FSHIN : 0))
 
-static int
-readf(void *oreo, char *buf, int siz)
+static ssize_t
+readf(void *oreo, char *buf, size_t siz)
 {
     return read(DESC(oreo), buf, siz);
 }
 
 
-static int
-writef(void *oreo, const char *buf, int siz)
+static ssize_t
+writef(void *oreo, const char *buf, size_t siz)
 {
     return write(DESC(oreo), buf, siz);
 }
 
-static fpos_t
-seekf(void *oreo, fpos_t off, int whence)
+static int
+seekf(void *oreo, off64_t *off, int whence)
 {
-    return lseek(DESC(oreo), off, whence);
+    return lseek(DESC(oreo), (off_t) *off, whence);
 }
 
 

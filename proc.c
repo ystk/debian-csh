@@ -953,16 +953,22 @@ dokill(Char **v, struct command *t)
 		signum = atoi(short2str(v[1]));
 		if (signum < 0 || signum >= NSIG)
 		    stderror(ERR_NAME | ERR_BADSIG);
-		else if (signum == 0)
-		    (void) fputc('0', cshout); /* 0's symbolic name is '0' */
+		else if (sys_sigabbrev[signum] == NULL)
+		    (void) fprintf(cshout, "%d", signum);
 		else
-		    (void) fprintf(cshout, "%s ", sys_signame[signum]);
+		    (void) fprintf(cshout, "%s ", sys_sigabbrev[signum]);
 	    } else {
-		for (signum = 1; signum < NSIG; signum++) {
-		    (void) fprintf(cshout, "%s ", sys_signame[signum]);
-		    if (signum == NSIG / 2)
-			(void) fputc('\n', cshout);
-	    	}
+	        int cur = 0, len;
+		for (signum = 1; signum < NSIG; signum++)
+		    if (sys_sigabbrev[signum]) {
+			len = strlen(sys_sigabbrev[signum]) + 1;
+			cur += len;
+			if (cur >= 80 - 1) {
+			    (void) fputc('\n', cshout);
+			    cur = len;
+			}
+			(void) fprintf(cshout, "%s ", sys_sigabbrev[signum]);
+		    }
 	    }
 	    (void) fputc('\n', cshout);
 	    return;
@@ -986,9 +992,10 @@ dokill(Char **v, struct command *t)
 	    }
 
 	    for (signum = 1; signum < NSIG; signum++)
-		if (!strcasecmp(sys_signame[signum], name) ||
-		    (strlen(name) > 3 && !strncasecmp("SIG", name, 3) &&
-		     !strcasecmp(sys_signame[signum], name + 3)))
+		if (sys_sigabbrev[signum] && \
+		    (!strcasecmp(sys_sigabbrev[signum], name) ||
+		     (strlen(name) > 3 && !strncasecmp("SIG", name, 3) &&
+		      !strcasecmp(sys_sigabbrev[signum], name + 3))))
 			break;
 
 	    if (signum == NSIG) {

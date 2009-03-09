@@ -1,0 +1,246 @@
+csh (20070713-2) unstable; urgency=medium
+
+  * _glob.c (globextend): Use sysconf(_SC_ARG_MAX) rather than ARG_MAX.
+    Closes: #518860.
+  * Switch to debhelper 7.
+  * debian/doc-base: Update section to Shells.
+  * debian/postinst, debian/prerm: Use which rather than type.
+  * Conforms to Standards version 3.8.0.
+
+ -- Matej Vela <vela@debian.org>  Mon, 09 Mar 2009 09:15:35 +0100
+
+csh (20070713-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/menu: Move to Applications/Shells.
+
+ -- Matej Vela <vela@debian.org>  Fri, 13 Jul 2007 23:52:21 +0200
+
+csh (20060813-1) unstable; urgency=low
+
+  * New upstream release.
+  * Switch to cdbs.
+  * csh.c, csh.h, debian/preinst: Remove potato compatibility code.
+  * debian/postinst: Invoke add-shell unconditionally, to handle the case
+    where the package is re-installed after being removed.
+  * Conforms to Standards version 3.7.2.
+
+ -- Matej Vela <vela@debian.org>  Sun, 13 Aug 2006 15:53:42 +0200
+
+csh (20060413-1) unstable; urgency=low
+
+  * New upstream release.
+  * Since glibc is broken with respect to GLOB_NOMAGIC and backslashes
+    (and its maintainers refuse to see the light), switch back to BSD's
+    implementation of glob.  Closes: #220170.
+  * Incidentally, this removes the need to reimplement glob_t.gl_matchc,
+    fixing a bug that was causing `No match' errors when some patterns did
+    match and some didn't.  Closes: #350869.
+  * Prefix BSD libc sources (glob.c, strlcpy.c, vis.c) with an underscore
+    to avoid a conflict with our own glob.c.
+  * _glob.c (globtilde): Replace issetugid with calls to get{e,}{u,g}id.
+  * Use add-shell and remove-shell.  Closes: #361544.
+  * Switch to debhelper 5.
+  * debian/copyright: Document `debian/rules get-orig-source'.
+  * debian/doc-base: Rephrase abstract.
+  * debian/rules: Set CVS_RSH to ssh.
+  * Conforms to Standards version 3.6.2.
+
+ -- Matej Vela <vela@debian.org>  Thu, 13 Apr 2006 18:48:29 +0200
+
+csh (20050313-1) unstable; urgency=low
+
+  * New upstream release.
+  * Revert to a flat source tree, it does make things simpler.
+  * exp.c (exp2): Rename to csh_exp2 to avoid conflict with gcc builtin
+    (thanks to Andreas Jochens).  Closes: #258588.
+  * glob.c (libglob): GLOB_NOMAGIC has been fixed in glibc 2.3 (#106097).
+  * proc.c (dokill): glibc has an undocumented sys_sigabbrev array with
+    signal names, so we no longer have to generate our own.
+  * vis.c (isvisible): Comparison with UCHAR_MAX triggers `always true'
+    warnings for unsigned char arguments; since this is already checked by
+    isascii, remove it.  Closes: #268438.
+  * vis.h: Remove OpenBSD-specific `bounded' attribute.
+  * Switch to debhelper 4.
+  * debian/doc-base: Add doc-base support.
+  * debian/menu: Add menu file (thanks to Bill Allombert).  Closes: #187629.
+  * debian/rules:
+    - Re-enable -Werror on alpha now that #97603 is fixed.
+    - Make sure groff uses traditional (non-ANSI) escape sequences.
+    - Remove support for DEB_BUILD_OPTIONS=debug.
+    - Add support for DEB_BUILD_OPTIONS=noopt.
+  * Conforms to Standards version 3.6.1.
+
+ -- Matej Vela <vela@debian.org>  Sun, 13 Mar 2005 22:14:05 +0100
+
+csh (20020413-1.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Urgency=high for sarge-targetted RC bugfix.
+  * Fix implicit signed char assumptions in source, addressing FTBFS bugs
+    on arm/powerpc/s390 (closes: #268438).
+
+ -- Steve Langasek <vorlon@debian.org>  Mon,  6 Sep 2004 19:31:44 -0700
+
+csh (20020413-1) unstable; urgency=low
+
+  * New upstream version.
+  * Removed the /usr/bin/csh compatibility symlink.  Since /usr/bin
+    precedes /bin in the PATH, a configure script would use the former
+    location instead of the one managed by alternatives, and things
+    wouldn't work with tcsh (cf. #106547).  Obviously, this doesn't break
+    anything that isn't already broken for tcsh.
+
+ -- Matej Vela <vela@debian.org>  Sat, 13 Apr 2002 18:34:51 +0200
+
+csh (20020213-1) unstable; urgency=low
+
+  * New upstream version.  Handles out of range argv subscripts.
+    Closes: #131693.
+
+ -- Matej Vela <vela@debian.org>  Wed, 13 Feb 2002 23:03:47 +0100
+
+csh (20011113-1) unstable; urgency=high
+
+  * New upstream version.
+  * csh.c: On glibc (<< 2.2), call cookie_seek_function_t with an
+    off_t instead of an off64_t *.  The package now builds on potato.
+    Closes: #119344.
+  * csh.c: Leave standard streams open for progprintf.
+  * csh.c, proc.c: Substitute fpurge with the recently added __fpurge.
+  * csh.h: On the Hurd, <sys/param.h> seems to define MAXPATHLEN to
+    PATH_MAX without defining the latter; provide a default.
+  * func.c (doprintf): progprintf uses stdout/stderr, so flush those
+    rather than cshout/csherr.
+  * pathnames.h (_PATH_LOGIN): login is in /bin, not /usr/bin.
+
+ -- Matej Vela <vela@debian.org>  Tue, 13 Nov 2001 20:53:00 +0100
+
+csh (20010813-1) unstable; urgency=high
+
+  * New upstream version.
+  * debian/rules: stdio.h causes a cpp warning on alpha; conditionally
+    disable -Werror until #97603 is fixed.  Closes: #106285.
+  * glob.c: GLOB_NOMAGIC produces false positives for patterns like
+    `*/xxx'; work around it until #106097 is fixed.
+  * Conforms to Standards version 3.5.6.
+
+ -- Matej Vela <vela@debian.org>  Mon, 13 Aug 2001 20:33:24 +0200
+
+csh (20010613-1) unstable; urgency=low
+
+  * New upstream version.
+  * New maintainer.  Closes: #92493.
+  * debian/prerm: `update-alternatives --remove' wants /bin/bsd-csh, not
+    /bin/csh.
+  * Conforms to Standards version 3.5.5.
+
+ -- Matej Vela <vela@debian.org>  Wed, 13 Jun 2001 03:31:52 +0200
+
+csh (20010413-1) unstable; urgency=medium
+
+  * New upstream version, re-ported from OpenBSD-current:
+    * csh.c: Include <time.h> for time_t etc.  Closes: #90859.
+    * csh.c (main, readf, writef, seekf, closef): funopen substituted
+      with fopencookie.
+    * csh.c (pintr1), proc.c (pprint): fpurge substituted with fflush.
+      (Anything better?)
+    * csh.h: Define MAXPATHLEN to 4096 if it isn't already defined (e.g.
+      on the Hurd).  If X11 and Tcl can get away with it, so can we. ;-)
+      Closes: #54993.
+    * glob.c (libglob):
+      * Don't set GLOB_QUOTE, it's already default.
+      * Work around gl_matchc, this time correctly.  Closes: #88780.
+    * misc.c (closem): Upstream fixed it to use `sysconf (_SC_OPEN_MAX)'
+      rather than NOFILE.  Closes: #63650.
+    * proc.c (dokill), proc.h, siglist.in: Use our own sys_signame
+      array, constructed from siglist.in (taken from pdksh 5.2.14).
+  * Package is orphaned (see #92493); maintainer set to Debian QA Group.
+  * Converted to debhelper.  Closes: #91435.
+  * Conforms to Standards version 3.5.2:
+    * Added build dependencies.  Closes: #90860.
+    * debian/rules: Support the `debug' build option.
+    * debian/copyright: Updated.
+  * Changed priority to optional, catching up with the override file.
+  * debian/lintian: Override the `binary-without-manpage: csh' Lintian
+    error caused by the /usr/bin/csh -> /bin/csh symlink.
+  * debian/rules: Added a `get-orig-source' target.
+  * Removed pre-bo (<< 5.26-6) compatibility code.
+
+ -- Matej Vela <vela@debian.org>  Fri, 13 Apr 2001 20:43:09 +0200
+
+csh (5.26-12) unstable; urgency=low
+
+  * move csh to /bin/bsd-csh
+
+ -- Michael Stone <mstone@debian.org>  Tue,  2 Jan 2001 07:36:42 -0500
+
+csh (5.26-11) unstable; urgency=low
+
+  * New maintainer.
+  * Updated policy version
+
+ -- Michael Stone <mstone@debian.org>  Tue,  2 Jan 2001 06:59:11 -0500
+
+csh (5.26-10) unstable; urgency=low
+
+  * New maintainer.
+
+ -- Edward Brocklesby <ejb@debian.org>  Sat, 10 Jul 1999 11:12:48 -0700
+
+csh (5.26-9) unstable; urgency=low
+
+  * libc6 release.
+  * Several fixes (hacks really, for the most part) to get it to build on
+    libc6.
+  * Clean up const.h in debian/rules clean.
+  * Run dpkg-shlibdeps.
+  * Orphaned the package, now maintained by debian-qa.
+
+ -- Joey Hess <joeyh@master.debian.org>  Thu, 20 Nov 1997 20:57:46 -0500
+
+csh (5.26-8) stable unstable; urgency=HIGH
+
+  * Added glob functions from 4.4BSD libc to work around missing BSD
+    compatibility in Linux libc. That fixes Bug#6501.
+  * Replaced manual page with newer one from NetBSD.  This fixes Bug#5872.
+  * Changed Maintainer address to <dominik@debian.org>.
+  * Added USD manual "An Introduction to the C shell" from NetBSD.
+    This will be installed both as Latin-1 text and postscript file.
+
+ -- Dominik Kubla <dominik@debian.org>  Sat, 25 Jan 1997 14:41:04 +0100
+
+csh (5.26-7) unstable; urgency=low
+
+  * Minor bugfixes in debian/rules.  Should now comply with "Debian Programmers
+    Manual", section 3.2.1
+
+  * manual page is now installed in 'gzip -9' format as per
+    "Debian Policy Manual", section 3.2.1
+
+  * changed priority from 'optional' to 'standard'.
+
+ -- Dominik Kubla <Dominik.Kubla@Uni-Mainz.DE>  Mon, 30 Sep 1996 16:43:37 +0200
+
+csh (5.26-6) unstable; urgency=low
+
+  * Applied patches provided by Randy Gobbel <gobbel@cogsci.ucsd.edu> to
+    fix a malloc and a string match bug.
+
+  * copyright file is now installed in /usr/doc/csh/copyright as per
+    "Debian Policy Manual", Section 3.2.6
+
+  * Package is now compiled with CFLAGS set to '-O2 -g -Wall' as per
+    "Debian Policy Manual", Section 4.1
+
+  * csh does now use alternatives instead of diversions to coexist with
+    tcsh.  Therefore it conflicts with tcsh <= 6.06-3 because tcsh does
+    not yet use alternatives.
+
+ -- Dominik Kubla <Dominik.Kubla@Uni-Mainz.DE>  Sat, 28 Sep 1996 19:48:15 +0200
+
+csh (5.26-5) unstable; urgency=low
+
+  * Converted to new packaing standards.
+
+ -- Dominik Kubla <Dominik.Kubla@Uni-Mainz.DE>  Thu, 12 Sep 1996 09:44:45 +0200

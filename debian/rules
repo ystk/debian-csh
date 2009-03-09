@@ -1,0 +1,48 @@
+#!/usr/bin/make -f
+
+# Standard options minus `-Wall', since upstream uses `-Werror'.
+export CFLAGS := -g -O$(if $(findstring noopt,$(DEB_BUILD_OPTIONS)),0,2)
+
+# Make sure groff uses traditional (non-ANSI) escape sequences.
+export GROFF_NO_SGR := 1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	pmake
+	cd USD.doc && pmake paper.ps paper.txt
+
+override_dh_auto_clean:
+	pmake cleandir
+	cd USD.doc && pmake cleandir
+
+override_dh_auto_install:
+	install -D csh debian/csh/bin/bsd-csh
+	install -D -m 644 USD.doc/paper.txt debian/csh/usr/share/doc/csh/csh.txt
+	install -D -m 644 USD.doc/paper.ps debian/csh/usr/share/doc/csh/csh.ps
+	install -D -m 644 -p csh.1 debian/csh/usr/share/man/man1/bsd-csh.1
+
+export CVSROOT := anoncvs@anoncvs.openbsd.org:/cvs
+export CVS_RSH := ssh
+
+get-orig-source:
+	set -ex; \
+	dir=`mktemp -d`; \
+	ver=`date +%Y%m%d`; \
+	cd "$$dir"; \
+	cvs export -r HEAD src/bin/csh \
+			   src/include/glob.h src/lib/libc/gen/glob.c \
+			   src/lib/libc/string/strlcpy.c \
+			   src/include/vis.h src/lib/libc/gen/vis.c; \
+	mv src/bin/csh csh-$$ver.orig; \
+	for hdr in `find src -name \*.h`; do \
+		mv $$hdr csh-$$ver.orig; \
+	done; \
+	for src in `find src -name \*.c`; do \
+		mv $$src csh-$$ver.orig/_$${src##*/}; \
+	done; \
+	GZIP=-9 tar czf $(CURDIR)/csh_$$ver.orig.tar.gz csh-$$ver.orig; \
+	rm -rf "$$dir"
+
+.PHONY: get-orig-source

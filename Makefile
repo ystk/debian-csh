@@ -7,12 +7,14 @@
 
 PROG=	csh
 DFLAGS=-DBUILTIN -DFILEC -DNLS -DSHORT_STRINGS
+DFLAGS+=-D_GNU_SOURCE -D__BSD_VISIBLE
 #CFLAGS+=-g
 #CFLAGS+=-Wall
 CFLAGS+=-I${.CURDIR} -I. ${DFLAGS}
 SRCS=	alloc.c char.c const.c csh.c dir.c dol.c error.c exec.c exp.c file.c \
 	func.c glob.c hist.c init.c lex.c misc.c parse.c proc.c \
 	sem.c set.c str.c time.c
+SRCS+=	_glob.c _strlcpy.c _vis.c
 
 MLINKS=	csh.1 limit.1 csh.1 alias.1 csh.1 bg.1 csh.1 dirs.1 csh.1 fg.1 \
 	csh.1 foreach.1 csh.1 history.1 csh.1 jobs.1 csh.1 popd.1 \
