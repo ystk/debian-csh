@@ -1,0 +1,17 @@
+Description: Include <time.h> for time_t etc.
+Forwarded: not-needed
+Author: Matej Vela <vela@debian.org>
+Last-Update: 2011-07-05
+
+Index: csh-20110502/csh.c
+===================================================================
+--- csh-20110502.orig/csh.c
++++ csh-20110502/csh.c
+@@ -44,6 +44,7 @@
+ #include <unistd.h>
+ #include <bsd/vis.h>
+ #include <stdarg.h>
++#include <time.h>
+ 
+ #include "csh.h"
+ #include "proc.h"

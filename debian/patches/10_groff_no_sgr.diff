@@ -1,0 +1,17 @@
+Description: Enable GROFF_NO_SGR for traditional (non-ANSI) escape sequences
+Forwarded: not-needed
+Author: Matej Vela <vela@debian.org>
+Last-Update: 2011-05-13
+
+Index: csh-20110502/USD.doc/Makefile
+===================================================================
+--- csh-20110502.orig/USD.doc/Makefile
++++ csh-20110502/USD.doc/Makefile
+@@ -6,6 +6,7 @@
+ MACROS= -ms
+ 
+ paper.txt: ${SRCS}
++	GROFF_NO_SGR=1 \
+ 	${ROFF} -Tascii ${SRCS} > ${.TARGET}
+ 
+ .include <bsd.doc.mk>

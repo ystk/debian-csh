@@ -1,0 +1,6 @@
+?package(csh):\
+ needs="text"\
+ section="Applications/Shells"\
+ longtitle="C shell"\
+ title="Csh"\
+ command="/bin/bsd-csh -l"

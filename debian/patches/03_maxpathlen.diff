@@ -1,0 +1,21 @@
+Description: Define MAXPATHLEN if missing (e.g. on the Hurd)
+Bug-Debian: http://bugs.debian.org/54993
+Forwarded: not-needed
+Author: Matej Vela <vela@debian.org>
+Last-Update: 2011-05-13
+
+Index: csh-20110313/csh.h
+===================================================================
+--- csh-20110313.orig/csh.h
++++ csh-20110313/csh.h
+@@ -42,6 +42,10 @@
+ #define	BUFSIZ	1024		/* default buffer size */
+ #endif				/* BUFSIZ */
+ 
++#ifndef MAXPATHLEN
++#define MAXPATHLEN BUFSIZ
++#endif
++
+ #define FORKSLEEP	10	/* delay loop on non-interactive fork failure */
+ #define	MAILINTVL	600	/* 10 minutes */
+ 

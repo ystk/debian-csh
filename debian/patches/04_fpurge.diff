@@ -1,0 +1,19 @@
+Description: Replace BSD-specific fpurge with GNU-specific __fpurge
+Forwarded: not-needed
+Author: Matej Vela <vela@debian.org>
+Last-Update: 2011-05-13
+
+Index: csh-20110313/csh.h
+===================================================================
+--- csh-20110313.orig/csh.h
++++ csh-20110313/csh.h
+@@ -96,6 +96,9 @@
+ #include <stdio.h>
+ FILE *cshin, *cshout, *csherr;
+ 
++#include <stdio_ext.h>
++#define fpurge __fpurge
++
+ #define	isdir(d)	(S_ISDIR(d.st_mode))
+ 
+ typedef int bool;

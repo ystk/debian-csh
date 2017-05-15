@@ -1,0 +1,82 @@
+Description: Use libbsd for strlcpy, vis
+Forwarded: not-needed
+Author: Matej Vela <vela@debian.org>
+Last-Update: 2011-07-05
+
+Index: csh-20110502/Makefile
+===================================================================
+--- csh-20110502.orig/Makefile
++++ csh-20110502/Makefile
+@@ -14,6 +14,7 @@
+ SRCS=	alloc.c char.c const.c csh.c dir.c dol.c error.c exec.c exp.c file.c \
+ 	func.c glob.c hist.c init.c lex.c misc.c parse.c proc.c \
+ 	sem.c set.c str.c time.c
++LDADD+=	-lbsd
+ 
+ CLEANFILES+=error.h const.h
+ 
+Index: csh-20110502/csh.c
+===================================================================
+--- csh-20110502.orig/csh.c
++++ csh-20110502/csh.c
+@@ -39,9 +39,10 @@
+ #include <pwd.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <bsd/string.h>
+ #include <locale.h>
+ #include <unistd.h>
+-#include <vis.h>
++#include <bsd/vis.h>
+ #include <stdarg.h>
+ 
+ #include "csh.h"
+Index: csh-20110502/dir.c
+===================================================================
+--- csh-20110502.orig/dir.c
++++ csh-20110502/dir.c
+@@ -35,6 +35,7 @@
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <bsd/string.h>
+ #include <unistd.h>
+ #include <stdarg.h>
+ 
+Index: csh-20110502/glob.c
+===================================================================
+--- csh-20110502.orig/glob.c
++++ csh-20110502/glob.c
+@@ -35,6 +35,7 @@
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <bsd/string.h>
+ #include <unistd.h>
+ #include <stdarg.h>
+ 
+Index: csh-20110502/sem.c
+===================================================================
+--- csh-20110502.orig/sem.c
++++ csh-20110502/sem.c
+@@ -37,6 +37,7 @@
+ #include <fcntl.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <bsd/string.h>
+ #include <unistd.h>
+ #include <stdarg.h>
+ 
+Index: csh-20110502/str.c
+===================================================================
+--- csh-20110502.orig/str.c
++++ csh-20110502/str.c
+@@ -39,7 +39,7 @@
+ 
+ #include <sys/types.h>
+ #include <stdarg.h>
+-#include <vis.h>
++#include <bsd/vis.h>
+ 
+ #include "csh.h"
+ #include "extern.h"

@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+
+# Standard options minus `-Wall', since upstream uses `-Werror'.
+export CFLAGS := -g -O$(if $(findstring noopt,$(DEB_BUILD_OPTIONS)),0,2)
+
+%:
+	dh $@ --buildsystem=bmake
+
+override_dh_auto_build:
+	dh_auto_build
+	dh_auto_build -- -C USD.doc paper.ps paper.txt
+
+override_dh_auto_clean:
+	dh_auto_clean
+	dh_auto_clean -- -C USD.doc
+
+override_dh_auto_install:
+	install -D csh debian/csh/bin/bsd-csh
+	install -D -m 644 USD.doc/paper.txt debian/csh/usr/share/doc/csh/csh.txt
+	install -D -m 644 USD.doc/paper.ps debian/csh/usr/share/doc/csh/csh.ps
+	install -D -m 644 -p csh.1 debian/csh/usr/share/man/man1/bsd-csh.1
+
+export CVSROOT := anoncvs@anoncvs.openbsd.org:/cvs
+export CVS_RSH := ssh
+
+get-orig-source:
+	set -ex; \
+	tmpdir=`mktemp -d`; \
+	trap 'rm -rf "$$tmpdir"' EXIT; \
+	cd "$$tmpdir"; \
+	cvs export -r HEAD src/bin/csh; \
+	ver=`find -type f -printf '%TY%Tm%Td\n' | sort -r | head -n 1`; \
+	mv src/bin/csh csh-$$ver.orig; \
+	GZIP=-9 tar czf $(CURDIR)/csh_$$ver.orig.tar.gz csh-$$ver.orig
+
+.PHONY: get-orig-source

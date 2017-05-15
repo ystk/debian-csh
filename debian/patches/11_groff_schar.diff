@@ -1,0 +1,28 @@
+Description: Make footnote marks legible in csh.txt
+ Symptoms:
+ .
+  csh.2:296: warning: can't find special character `dg'
+  csh.2:542: warning: can't find special character `dd'
+Bug: http://cvs.openbsd.org/cgi-bin/query-pr-wrapper?full=yes&numbers=6604
+Author: Matej Vela <vela@debian.org>
+Last-Update: 2011-05-13
+
+Index: csh-20110502/USD.doc/csh.1
+===================================================================
+--- csh-20110502.orig/USD.doc/csh.1
++++ csh-20110502/USD.doc/csh.1
+@@ -34,6 +34,14 @@
+ .po 5n
+ .ll 70n
+ .\}
++.\" If this is groff, i.e. if schar is available...
++.if \n(.g \{
++.\" ... provide fallback definitions for dagger and double-dagger to make
++.\" footnote marks legible in ASCII output.  This is a no-op if they are
++.\" supported by the output device (e.g. -Tps, -Tutf8).
++.schar \(dg *
++.schar \(dd **
++.\}
+ .EH 'USD:4-%''An Introduction to the C shell'
+ .OH 'An Introduction to the C shell''USD:4-%'
+ .\".RP

@@ -1,0 +1,11 @@
+01_gnu_source.diff
+02_libbsd.diff
+03_maxpathlen.diff
+04_fpurge.diff
+05_fhs_pathnames.diff
+06_time_h_for_time_t.diff
+07_funopen.diff
+08_glob.diff
+09_sys_signame.diff
+10_groff_no_sgr.diff
+11_groff_schar.diff
