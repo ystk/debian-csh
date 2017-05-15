@@ -1,4 +1,4 @@
-.\"	$OpenBSD: csh.1,v 1.57 2007/05/31 19:19:14 jmc Exp $
+.\"	$OpenBSD: csh.1,v 1.65 2011/05/02 11:14:11 jmc Exp $
 .\"	$NetBSD: csh.1,v 1.10 1995/03/21 09:02:35 cgd Exp $
 .\"
 .\" Copyright (c) 1980, 1990, 1993
@@ -30,7 +30,7 @@
 .\"
 .\"	@(#)csh.1	8.2 (Berkeley) 1/21/94
 .\"
-.Dd $Mdocdate$
+.Dd $Mdocdate: May 2 2011 $
 .Dt CSH 1
 .Os
 .Sh NAME
@@ -214,7 +214,7 @@ The characters
 .Ql \&; ,
 .Ql < ,
 .Ql > ,
-.Ql ( ,
+.Ql \&( ,
 and
 .Ql \&)
 form separate words.
@@ -277,7 +277,7 @@ waiting for it to terminate by following it with a
 .Ql & .
 .Pp
 Any of the above may be placed in
-.Ql (
+.Ql \&(
 .Ql \&)
 to form a simple command (that
 may be a component of a pipeline, for example).
@@ -576,7 +576,7 @@ character is passed unchanged when it is followed by a blank,
 tab, newline,
 .Ql =
 or
-.Ql ( .
+.Ql \&( .
 (History substitutions also occur when an input line begins with
 .Ql ^ .
 This special abbreviation will be described later.)
@@ -597,7 +597,7 @@ For definiteness, consider the following output from the
 .Ic history
 command:
 .Bd -literal -offset indent
-\09  write michael
+09  write michael
 10  ex write.c
 11  cat oldwrite.c
 12  diff *write.c
@@ -1105,7 +1105,7 @@ only part of a word, even if the command outputs a complete line.
 If a word contains any of the characters
 .Ql * ,
 .Ql \&? ,
-.Ql [ ,
+.Ql \&[ ,
 or
 .Ql { ,
 or begins with the character
@@ -1122,7 +1122,7 @@ Only the metacharacters
 .Ql * ,
 .Ql \&? ,
 and
-.Ql [
+.Ql \&[
 imply pattern matching,
 the characters
 .Ql ~
@@ -1145,6 +1145,7 @@ string.
 The character
 .Ql \&?
 matches any single character.
+.Pp
 The sequence
 .Dq Op ...
 matches any one of the characters enclosed.
@@ -1154,6 +1155,25 @@ a pair of characters separated by
 .Ql \-
 matches any character lexically between
 the two (inclusive).
+Within
+.Dq Op ... ,
+the name of a
+.Em character class
+enclosed in
+.Sq [:
+and
+.Sq :]
+stands for the list of all characters belonging to that class.
+Supported character classes:
+.Bl -column "xdigit" "xdigit" "xdigit" -offset indent
+.It Li "alnum" Ta "cntrl" Ta "lower" Ta "space"
+.It Li "alpha" Ta "digit" Ta "print" Ta "upper"
+.It Li "blank" Ta "graph" Ta "punct" Ta "xdigit"
+.El
+.Pp
+These match characters using the macros specified in
+.Xr ctype 3 .
+A character class may not be used as an endpoint of a range.
 .Pp
 The character
 .Ql ~
@@ -1344,7 +1364,7 @@ and
 commands.
 The following operators are available:
 .Bd -ragged -offset indent
-\&|\&|  &&  \&| \*(ua  &  ==  !=  =~  !~  <=  >=
+||  &&  | \*(ua  &  ==  !=  =~  !~  <=  >=
 <  > <<  >>  +  \-  *  /  %  !  ~  (  )
 .Ed
 .Pp
@@ -1411,7 +1431,7 @@ are syntactically significant to the parser
 .Ql | ,
 .Ql < ,
 .Ql > ,
-.Ql ( ,
+.Ql \&( ,
 and
 .Ql \&)
 .Pc ,
@@ -1697,17 +1717,13 @@ that does not begin with a
 .Pp
 .It Ic history
 .It Ic history Ar n
-.It Ic history Fl r Ar n
 .It Ic history Fl h Ar n
+.It Ic history Fl r Ar n
 Displays the history event list; if
 .Ar n
 is given, only the
 .Ar n
 most recent events are printed.
-The
-.Fl r
-option reverses the order of printout to be most recent first
-instead of oldest first.
 The
 .Fl h
 option causes the history list to be printed without leading numbers.
@@ -1715,6 +1731,10 @@ This format produces files suitable for sourcing using the
 .Fl h
 option to
 .Ic source .
+The
+.Fl r
+option reverses the order of printout to be most recent first
+instead of oldest first.
 .Pp
 .It Ic if ( Ar expr ) No command
 If the specified expression evaluates to true, then the single
@@ -2303,7 +2323,7 @@ or
 .Ql |
 then at least
 this part of the expression must be placed within
-.Ql (
+.Ql \&(
 .Ql \&) .
 The third form assigns the value of
 .Ar expr
@@ -2316,7 +2336,6 @@ Both
 and its
 .Ar index Ns 'th
 component must already exist.
-.El
 .Pp
 The operators
 .Ql *= ,
@@ -2335,6 +2354,7 @@ operators increment and decrement
 .Ar name
 respectively; i.e.,
 .Dq @  i++ .
+.El
 .Ss Pre-defined and environment variables
 The following variables have special meaning to the shell.
 Of these,
@@ -2704,9 +2724,6 @@ source of home directories for
 .Xr a.out 5 ,
 .Xr environ 7 ,
 .Xr script 7
-.Pp
-"An Introduction to the C shell",
-.Pa /usr/share/doc/usd/04.csh/ .
 .Sh HISTORY
 .Nm
 appeared in

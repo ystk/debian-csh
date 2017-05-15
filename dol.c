@@ -1,4 +1,4 @@
-/*	$OpenBSD: dol.c,v 1.15 2005/02/25 16:07:10 deraadt Exp $	*/
+/*	$OpenBSD: dol.c,v 1.17 2010/08/12 02:00:27 kevlo Exp $	*/
 /*	$NetBSD: dol.c,v 1.8 1995/09/27 00:38:38 jtc Exp $	*/
 
 /*-
@@ -29,14 +29,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#ifndef lint
-#if 0
-static char sccsid[] = "@(#)dol.c	8.1 (Berkeley) 5/31/93";
-#else
-static char rcsid[] = "$OpenBSD: dol.c,v 1.15 2005/02/25 16:07:10 deraadt Exp $";
-#endif
-#endif /* not lint */
 
 #include <sys/types.h>
 #include <fcntl.h>
@@ -870,8 +862,9 @@ heredoc(Char *term)
 	 * Check for EOF or compare to terminator -- before expansion
 	 */
 	if (c < 0 || eq(lbuf, term)) {
-	    (void) write(0, short2str(obuf), (size_t) (BUFSIZ - ocnt));
-	    (void) lseek(0, (off_t) 0, SEEK_SET);
+	    (void) write(STDIN_FILENO, short2str(obuf), 
+	        (size_t) (BUFSIZ - ocnt));
+	    (void) lseek(STDIN_FILENO, (off_t) 0, SEEK_SET);
 	    return;
 	}
 
@@ -884,7 +877,7 @@ heredoc(Char *term)
 	    for (lbp = lbuf; (c = *lbp++) != '\0';) {
 		*obp++ = c;
 		if (--ocnt == 0) {
-		    (void) write(0, short2str(obuf), BUFSIZ);
+		    (void) write(STDIN_FILENO, short2str(obuf), BUFSIZ);
 		    obp = obuf;
 		    ocnt = BUFSIZ;
 		}
@@ -948,14 +941,14 @@ heredoc(Char *term)
 	    for (mbp = *vp; *mbp; mbp++) {
 		*obp++ = *mbp & TRIM;
 		if (--ocnt == 0) {
-		    (void) write(0, short2str(obuf), BUFSIZ);
+		    (void) write(STDIN_FILENO, short2str(obuf), BUFSIZ);
 		    obp = obuf;
 		    ocnt = BUFSIZ;
 		}
 	    }
 	    *obp++ = '\n';
 	    if (--ocnt == 0) {
-		(void) write(0, short2str(obuf), BUFSIZ);
+		(void) write(STDIN_FILENO, short2str(obuf), BUFSIZ);
 		obp = obuf;
 		ocnt = BUFSIZ;
 	    }

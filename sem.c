@@ -1,4 +1,4 @@
-/*	$OpenBSD: sem.c,v 1.15 2003/06/11 21:09:50 deraadt Exp $	*/
+/*	$OpenBSD: sem.c,v 1.17 2010/08/12 02:00:27 kevlo Exp $	*/
 /*	$NetBSD: sem.c,v 1.9 1995/09/27 00:38:50 jtc Exp $	*/
 
 /*-
@@ -29,14 +29,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#ifndef lint
-#if 0
-static char sccsid[] = "@(#)sem.c	8.1 (Berkeley) 5/31/93";
-#else
-static char rcsid[] = "$OpenBSD: sem.c,v 1.15 2003/06/11 21:09:50 deraadt Exp $";
-#endif
-#endif /* not lint */
 
 #include <sys/param.h>
 #include <sys/ioctl.h>
@@ -554,7 +546,7 @@ doio(struct command *t, int *pipein, int *pipeout)
 	else {
 	    (void) close(0);
 	    (void) dup(OLDSTD);
-	    (void) ioctl(0, FIONCLEX, NULL);
+	    (void) ioctl(STDIN_FILENO, FIONCLEX, NULL);
 	}
     }
     if (t->t_drit) {
@@ -573,7 +565,7 @@ doio(struct command *t, int *pipein, int *pipeout)
 	    (fd = open(tmp, O_WRONLY | O_APPEND)) >= 0);
 #else
 	    (fd = open(tmp, O_WRONLY)) >= 0)
-	    (void) lseek(1, (off_t) 0, SEEK_END);
+	    (void) lseek(STDOUT_FILENO, (off_t) 0, SEEK_END);
 #endif
 	else {
 	    if (!(flags & F_OVERWRITE) && adrof(STRnoclobber)) {
@@ -593,7 +585,7 @@ doio(struct command *t, int *pipein, int *pipeout)
     else {
 	(void) close(1);
 	(void) dup(SHOUT);
-	(void) ioctl(1, FIONCLEX, NULL);
+	(void) ioctl(STDOUT_FILENO, FIONCLEX, NULL);
     }
 
     (void) close(2);
@@ -602,7 +594,7 @@ doio(struct command *t, int *pipein, int *pipeout)
     }
     else {
 	(void) dup(SHERR);
-	(void) ioctl(2, FIONCLEX, NULL);
+	(void) ioctl(STDERR_FILENO, FIONCLEX, NULL);
     }
     didfds = 1;
 }
